@@ -3,28 +3,36 @@
 namespace App\Http\Controllers;
 
 use Github\Client;
+use Github\ResultPager;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('home.index', ['repositories' => $this->getRepositories()]);
     }
 
-    protected function getRepositories(){
-        if(!auth()->check()){
+    protected function getRepositories()
+    {
+        if (!auth()->check()) {
             return null;
         }
 
-        $client = new Client();
-
         $user = auth()->user();
 
-        $client->authenticate($user->token, null, Client::AUTH_ACCESS_TOKEN );
+        return Cache::remember(
+            "users.{$user->username}.repositories",
+            now()->addMinutes(10),
+            function () {
+                $client = new Client();
 
-        /*  $repositories = Cache::remember("users.{$user->username}.repositories.6", now()->addMinutes(10), function() use($client){
-              return $client->currentUser()->repositories('private');
-          });*/
+                $client->authenticate(auth()->user()->token, null, Client::AUTH_ACCESS_TOKEN);
 
-        return $client->currentUser()->repositories('private');
+                $paginator = new ResultPager($client);
+
+                return $paginator->fetchAll($client->currentUser(), 'repositories', ['all']);
+            }
+        );
     }
 }
