@@ -26,13 +26,22 @@ class LoginController extends Controller
         $user->update(
             [
                 'name' => $githubUser->getName(),
+                'username' => $githubUser->getNickname(),
                 'email' => $githubUser->getEmail(),
                 'avatar' => $githubUser->getAvatar(),
+                'token' => $githubUser->token ?? null,
+                'refresh_token' => $githubUser->refreshToken ?? null,
             ]
         );
 
         Auth::login($user);
 
         return redirect()->intended('/');
+    }
+
+    public function logout(){
+        Auth::logout();
+
+        return redirect()->route('home');
     }
 }
