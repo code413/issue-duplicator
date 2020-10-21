@@ -42,7 +42,11 @@ class CopyIssuesController extends Controller
             );
         }
 
-        return back();
+        return view('home.success', [
+            'from' => request('from'),
+            'to' => request('to'),
+            'issues' => $issues
+        ]);
     }
 
     protected function syncLabels($client, $fromUser, $fromRepo, $toUser, $toRepo){
@@ -58,7 +62,6 @@ class CopyIssuesController extends Controller
             }catch (\Exception $exception){
                 report($exception);
             }
-
         }
     }
 }

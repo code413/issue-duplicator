@@ -25,6 +25,6 @@ class HomeController extends Controller
               return $client->currentUser()->repositories('private');
           });*/
 
-        return $client->currentUser()->repositories('all');
+        return $client->currentUser()->repositories('private');
     }
 }
