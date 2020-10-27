@@ -8,9 +8,15 @@ class CopyIssuesController extends Controller
 {
     public function __invoke(GithubService $github)
     {
-        $github->syncLabels(request('from'), request('to'));
+        if (request('labels')) {
+            $github->syncLabels(
+                request('from'),
+                request('to'),
+                request('labels') === 'aggressive'
+            );
+        }
 
-        $issues = $github->syncIssues(request('from'), request('to'));
+        $issues = $github->syncIssues(request('from'), request('to'), request('labels') === null);
 
         return view(
             'home.success',

@@ -56,7 +56,26 @@ class GithubService
         );
     }
 
-    public function syncIssues($from, $to){
+    public function deleteLabel($repository, $name)
+    {
+        $this->client->api('issue')->labels()->deleteLabel(
+            $this->extractRepositoryUser($repository),
+            $this->extractRepositoryName($repository),
+            $name
+        );
+    }
+
+    public function flushLabels($repository)
+    {
+        $destinationLabels = collect($this->repositoryLabels($repository));
+
+        foreach ($destinationLabels as $label) {
+            $this->deleteLabel($repository, $label['name']);
+        }
+    }
+
+    public function syncIssues($from, $to, $ignoreLabels = false)
+    {
         $issues = $this->repositoryIssues($from);
 
         foreach ($issues as $issue) {
@@ -66,28 +85,33 @@ class GithubService
                 $labels[] = $label['name'];
             }
 
+            $attributes = [
+                'title' => $issue['title'],
+                'body' => $issue['body'],
+            ];
+
+            if(!$ignoreLabels){
+                $attributes['labels'] = $labels;
+            }
+
             $this->createIssue(
                 $to,
-                [
-                    'title' => $issue['title'],
-                    'body' => $issue['body'],
-                    'labels' => $labels
-                ]
+                $attributes
             );
         }
 
         return $issues;
     }
 
-    public function syncLabels($from, $to)
+    public function syncLabels($from, $to, $aggressive = false)
     {
         $labels = collect($this->repositoryLabels($from));
 
-        $destinationLabels = collect($this->repositoryLabels($to));
-
-        $labels = $labels->filter(function($label) use ($destinationLabels){
-           return !$destinationLabels->pluck('name')->contains($label['name']);
-        });
+        if ($aggressive) {
+            $this->flushLabels($to);
+        } else {
+            $labels = $this->filterExistingLabels($labels, $to);
+        }
 
         foreach ($labels as $label) {
             $this->createLabel(
@@ -101,6 +125,16 @@ class GithubService
         }
 
         return $labels->all();
+    }
+
+    protected function filterExistingLabels($labels, $repository){
+        $destinationLabels = collect($this->repositoryLabels($repository));
+
+        return $labels->filter(
+            function ($label) use ($destinationLabels) {
+                return !$destinationLabels->pluck('name')->contains($label['name']);
+            }
+        );
     }
 
     protected function extractRepositoryUser($repository)
