@@ -81,7 +81,13 @@ class GithubService
 
     public function syncLabels($from, $to)
     {
-        $labels = $this->repositoryLabels($from);
+        $labels = collect($this->repositoryLabels($from));
+
+        $destinationLabels = collect($this->repositoryLabels($to));
+
+        $labels = $labels->filter(function($label) use ($destinationLabels){
+           return !$destinationLabels->pluck('name')->contains($label['name']);
+        });
 
         foreach ($labels as $label) {
             $this->createLabel(
@@ -93,6 +99,8 @@ class GithubService
                 ]
             );
         }
+
+        return $labels->all();
     }
 
     protected function extractRepositoryUser($repository)
