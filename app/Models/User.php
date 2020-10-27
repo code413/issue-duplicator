@@ -39,17 +39,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function repositories(){
-        return Cache::remember(
-            "users.{$this->username}.repositories",
-            now()->addMinutes(10),
-            function () {
-                $client = new Client();
-
-                $client->authenticate($this->token, null, Client::AUTH_ACCESS_TOKEN);
-
-
-            }
+    public function updateGithubProfile($profile){
+        $this->update(
+            [
+                'name' => $profile->getName(),
+                'username' => $profile->getNickname(),
+                'email' => $profile->getEmail(),
+                'avatar' => $profile->getAvatar(),
+                'token' => $profile->token ?? null,
+                'refresh_token' => $profile->refreshToken ?? null,
+            ]
         );
     }
 }
