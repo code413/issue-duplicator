@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Github\Client;
+use Github\ResultPager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -36,4 +38,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function repositories(){
+        return Cache::remember(
+            "users.{$this->username}.repositories",
+            now()->addMinutes(10),
+            function () {
+                $client = new Client();
+
+                $client->authenticate($this->token, null, Client::AUTH_ACCESS_TOKEN);
+
+
+            }
+        );
+    }
 }
