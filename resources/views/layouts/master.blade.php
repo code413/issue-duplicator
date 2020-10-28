@@ -5,7 +5,7 @@
         <title>
             @yield('title')
             @if(!view()->hasSection('title.suffix'))
-                @if(view()->hasSection('title')) - @endif Checklist
+                @if(view()->hasSection('title')) - @endif Github Issue Duplicator
             @endif
         </title>
         @include('layouts.partials.meta')

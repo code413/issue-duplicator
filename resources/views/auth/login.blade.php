@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Login')
+
 @section('content')
     <div>
         <h1 class="text-xl font-bold mb-3">Copy All Issues</h1>

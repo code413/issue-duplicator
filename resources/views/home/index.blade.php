@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('description', 'Duplicate Github issues from a source repository to a destination repository.')
+
 @section('content')
     <form method="POST" action="{{ route('issues.copy') }}">
         @csrf
