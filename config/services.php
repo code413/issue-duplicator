@@ -36,4 +36,7 @@ return [
         'redirect' => 'http://checklist.test/login/github/callback',
     ],
 
+    'google_analytics' => [
+        'id' => env('GOOGLE_ANALYTICS_ID')
+    ]
 ];
