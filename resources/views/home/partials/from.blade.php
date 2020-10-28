@@ -9,7 +9,7 @@
         <div class="flex">
             From
 
-            <a href="{{ route('repositories.flush') }}" class="ml-auto text-blue-500 text-sm">
+            <a href="https://github.com/apps/issue-duplicator/installations/new" class="ml-auto text-blue-500 text-sm">
                 Can't find a repo?
             </a>
         </div>
