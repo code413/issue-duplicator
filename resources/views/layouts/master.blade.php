@@ -20,6 +20,7 @@
 @section('header')
     @include('partials.header')
 @show
+@include('partials.github-triangle')
 <main class="flex-1 @yield('main.class')">
     @section('main')
 
