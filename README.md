@@ -2,7 +2,7 @@
 
 Duplicate Github issues from a **source** repository to a **destination** repository.
 
-You may find and install this packaged as a [Github app](https://github.com/apps/issue-duplicator) for free. 
+You may find and install this tool packaged as a [Github app](https://github.com/apps/issue-duplicator) for free. 
 
 ## License
 
