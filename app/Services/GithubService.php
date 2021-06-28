@@ -26,7 +26,7 @@ class GithubService
         return $this->client->api('issue')->all(
             $this->extractRepositoryUser($repository),
             $this->extractRepositoryName($repository),
-            array('state' => 'open')
+            ['state' => 'open', 'direction' => 'asc']
         );
     }
 
